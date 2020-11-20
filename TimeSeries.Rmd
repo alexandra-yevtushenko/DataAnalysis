@@ -1,0 +1,92 @@
+---
+title: "Time Series Analysis"
+library(fpp)output: html_document
+---
+
+```{r}
+library(ggplot2)
+library("TTR")
+library(forecast)
+library(stats)
+library(astsa)
+library(tseries)
+```
+```{r}
+data <- prodn
+plot.ts(data, main = "Monthly Federal Reserve Board Production Index")
+```
+```{r}
+data_sma3 <- SMA(data, n = 3)
+plot.ts(data_sma3, main="Moving Average smoothing with n=3")
+
+data_sma7 <- SMA(data, n = 7)
+plot.ts(data_sma7, main="Moving Average smoothing with n=7")
+
+data_sma10 <- SMA(data, n = 10)
+plot.ts(data_sma10, main="Moving Average smoothing with n=10")
+
+data_sma30 <- SMA(data, n = 30)
+plot.ts(data_sma30, main="Moving Average smoothing with n=30")
+
+```
+
+```{r}
+data_decomp <- decompose(data)
+plot(data_decomp)
+```
+```{r}
+acf(data, main="Autocorrelation")
+pacf(data, main="Partial autocorrelation")
+```
+
+```{r}
+data_HWforecasts = HoltWinters(data)
+data_HWforecasts
+plot(forecast(data_HWforecasts))
+```
+```{r}
+data = log(data)
+plot.ts(data)
+```
+```{r}
+adf.test(data)
+```
+```{r}
+data_diff <- diff(data, lag=frequency(data))
+plot.ts(data_diff)
+```
+```{r}
+adf.test(data_diff)
+```
+```{r}
+data_diff = log(data_diff)
+plot.ts(data_diff)
+```
+```{r}
+
+```
+
+```{r}
+acf(data_diff)
+pacf(data_diff)
+```
+```{r}
+arimats <- auto.arima(data_diff)
+```
+```{r}
+arimats
+```
+```{r}
+model <- sarima(data_diff,2, 0, 1, P=0, D=0, Q=1, S=12)
+model
+```
+```{r}
+fts <- forecast(arimats)
+autoplot(fts)
+```
+
+
+
+
+
+

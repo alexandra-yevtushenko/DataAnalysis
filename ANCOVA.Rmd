@@ -1,0 +1,135 @@
+---
+title: "ANCOVA"
+output:
+  pdf_document: default
+  html_document: default
+---
+```{r}
+library(car)
+library(ISwR)
+```
+
+```{r}
+Input = ("
+Species   Temp   Pulse
+ ex       20.8   67.9
+ ex       20.8   65.1
+ ex       24     77.3
+ ex       24     78.7
+ ex       24     79.4
+ ex       24     80.4
+ ex       26.2   85.8
+ ex       26.2   86.6
+ ex       26.2   87.5
+ ex       26.2   89.1
+ ex       28.4   98.6
+ ex       29    100.8
+ ex       30.4   99.3
+ ex       30.4  101.7
+ niv      17.2   44.3
+ niv      18.3   47.2
+ niv      18.3   47.6
+ niv      18.3   49.6
+ niv      18.9   50.3
+ niv      18.9   51.8
+ niv      20.4   60
+ niv      21     58.5
+ niv      21     58.9
+ niv      22.1   60.7
+ niv      23.5   69.8
+ niv      24.2   70.9
+ niv      25.9   76.2
+ niv      26.5   76.1
+ niv      26.5   77
+ niv      26.5   77.7
+ niv      28.6   84.7
+")
+
+Data = read.table(textConnection(Input),header=TRUE)
+```
+
+```{r}
+#Біолог Уокер (1962) вивчав шлюбні пісні чоловічих цвіркунів. Ударами крил цвіркун утворює звук певної частоти. Уокер хотів дізнатись, чи мають пісні цвіркунів Oecanthus exclamationis та Oecanthus niveus різну частоту, і чи це допомагає самкам визначити цвіркунів свого типу. Він вимірював частоту пульсу цвіркунів при різних температурах:
+print(Data)
+```
+```{r}
+Data$Species <- factor(Data$Species, levels = c("ex", "niv"))
+```
+```{r}
+print(Data)
+```
+
+```{r}
+plot(x   = Data$Temp,
+     y   = Data$Pulse,
+     col = Data$Species,
+     pch = 16,
+     xlab = "Temperature",
+     ylab = "Pulse")
+
+legend('bottomright',
+       legend = levels(Data$Species),
+       col = 1:2,
+       cex = 1,   
+       pch = 16)
+```
+```{r}
+options(contrasts = c("contr.treatment", "contr.poly"))
+```
+```{r}
+model1 = lm (Pulse ~ Temp + Species + Temp:Species,
+              data = Data)
+
+summary(model1)
+
+```
+
+```{r}
+model2 = lm (Pulse ~ Temp + Species,
+              data = Data)
+summary(model2)
+```
+```{r}
+anova(model2)
+```
+```{r}
+
+Est = -7.21091
+L1 = Est + 0
+L2 = Est + -10.06529
+B  = 3.60275
+
+plot(x   = Data$Temp,
+     y   = Data$Pulse,
+     col = Data$Species,
+     pch = 16,
+     xlab = "Temperature",
+     ylab = "Pulse")
+
+legend('bottomright',
+       legend = levels(Data$Species),
+       col = 1:2,
+       cex = 1,   
+       pch = 16)
+
+abline(L1, B,
+       lty=1, lwd=2, col = 1)
+
+abline(L2, B,
+       lty=1, lwd=2, col = 2)
+```
+```{r}
+hist(residuals(model2),
+     col="darkgray",
+     main="Histogram of residuals",
+     xlab = "Residuals",
+     ylab = "Frequency")
+```
+```{r}
+plot(fitted(model2),
+     residuals(model2),
+     xlab = "Pulse",
+     ylab = "Residuals")
+abline(0, 0)
+```
+
