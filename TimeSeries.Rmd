@@ -63,10 +63,6 @@ data_diff = log(data_diff)
 plot.ts(data_diff)
 ```
 ```{r}
-
-```
-
-```{r}
 acf(data_diff)
 pacf(data_diff)
 ```
